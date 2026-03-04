@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Álgebra 1º ESO - El Código Matemático</title>
+    <style>
+        :root { 
+            --primary: #2c3e50; --accent: #3498db; --success: #27ae60; 
+            --danger: #e74c3c; --bg: #f4f7f6; --warning: #f39c12; --purple: #9b59b6; 
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; touch-action: manipulation; }
+        .app-container { max-width: 1000px; margin: auto; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        header { background: var(--primary); color: white; padding: 15px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        nav { display: flex; background: #34495e; padding: 5px; gap: 5px; flex-wrap: wrap; }
+        nav button { flex: 1; min-width: 100px; background: #465d75; border: none; color: white; padding: 12px; cursor: pointer; font-weight: bold; border-radius: 5px; transition: 0.3s; font-size: 0.9em; }
+        nav button.active { background: var(--accent); box-shadow: 0 4px 0 #2980b9; }
+
+        .content { padding: 25px; min-height: 500px; }
+        .tab { display: none; }
+        .tab.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .teoria-box { background: #e8f4f8; border-left: 5px solid var(--accent); padding: 20px; margin-bottom: 25px; border-radius: 8px; font-size: 1.05em; line-height: 1.6; color: #2c3e50; }
+        .activity-card { border: 2px solid #eee; border-radius: 15px; padding: 20px; margin-bottom: 30px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
+        .activity-title { color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        
+        .match-container { display: flex; justify-content: space-around; gap: 40px; margin: 20px 0; }
+        .column { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .item { padding: 15px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 10px; text-align: center; cursor: pointer; font-size: 1.1em; transition: 0.2s; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        .item.selected { border-color: var(--accent); background: #d6eaf8; transform: scale(1.02); }
+        .item.matched { background: #d4edda; border-color: #28a745; cursor: default; pointer-events: none; opacity: 0.6; }
+        
+        .mystery-box-large { font-size: 100px; text-align: center; margin: 20px 0; position: relative; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+        .q-mark { position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; font-size: 40px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+        
+        .anatomy-img { background: #2c3e50; color: white; border-radius: 15px; padding: 30px; text-align: center; margin: 20px 0; font-size: 50px; font-weight: bold; }
+        .parts-labels { display: flex; justify-content: center; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
+        .label { padding: 5px 15px; border-radius: 20px; font-size: 14px; color: white; font-weight: bold; }
+        
+        .grid-select { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .option-box { border: 1px solid #ddd; border-radius: 8px; padding: 12px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .option-box input { margin-right: 15px; transform: scale(1.3); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #34495e; color: white; padding: 10px; }
+        td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        input[type="text"] { width: 85%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; text-align: center; font-size: 1em; }
+
+        .match-row { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; margin-bottom: 10px; padding: 12px; border-radius: 10px; border: 1px solid #eee; }
+        .match-term { font-weight: bold; font-size: 1.2em; color: var(--primary); width: 100px; }
+        select { padding: 8px; border-radius: 5px; border: 1px solid var(--accent); font-size: 1em; width: 150px; }
+
+        .math-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; font-size: 1.3em; justify-content: center; }
+        .math-row input { width: 100px; font-size: 0.9em; border: 2px solid #ddd; }
+
+        .btn-check { background: var(--success); color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        .level-badge { background: var(--purple); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; margin-left: 10px; }
+        .feedback-msg { margin-top: 15px; font-weight: bold; min-height: 24px; text-align: center; font-size: 1.1em; }
+        .counter { font-size: 0.8em; color: #666; font-weight: normal; }
+        .btn-gen { background: var(--accent); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8em; }
+
+        .ex-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; margin-right: 5px; }
+        .ex-si { background: #d4edda; color: #155724; }
+        .ex-no { background: #f8d7da; color: #721c24; }
+        .step-box { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 10px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <div style="font-size: 30px; font-weight: bold; color: var(--accent);">Σ {a, b, c}</div>
+        <h1>El Código de las Matemáticas</h1>
+    </header>
+
+    <nav>
+        <button id="btn0" class="active" onclick="showTab(0)">1. El Traductor</button>
+        <button id="btn1" onclick="showTab(1)">2. Anatomía Monomio</button>
+        <button id="btn2" onclick="showTab(2)">3. Valor Numérico</button>
+        <button id="btn3" onclick="showTab(3)">4. Monomios Semejantes</button>
+        <button id="btn4" onclick="showTab(4)">5. Suma y Resta</button>
+    </nav>
+
+    <div class="content">
+        <div class="tab active" id="tab0">
+            <div class="teoria-box">
+                <h3 style="margin-top:0;">📖 Introducción al Álgebra</h3>
+                <p>En muchas tareas matemáticas es preciso trabajar con valores de número desconocido o indeterminado. Para ellos, se utilizan letras y se opera con las mismas propiedades que las expresiones numéricas.</p>
+                <p>Una <b>expresión algebraica</b> es una combinación de letras y números relacionados con las operaciones de suma, resta, multiplicación, división, potenciación y radicación.</p>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>1.1. Traductor de Iconos <span id="lvl-1-1" class="level-badge">Nivel 1</span></span><button class="btn-check" style="background:var(--accent)" onclick="nextLevel1_1()">Siguiente Ejercicio ➔</button></div>
+                <div class="match-container"><div class="column" id="col-1-1-l"></div><div class="column" id="col-1-1-r"></div></div>
+                <div id="feed-1-1" class="feedback-msg"></div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>1.2. Identificación Avanzada <span id="lvl-1-2" class="level-badge">Serie A</span></span><button class="btn-check" style="background:var(--accent)" onclick="nextLevel1_2()">Nuevas Expresiones 🔄</button></div>
+                <div id="grid-1-2" class="grid-select"></div>
+                <center><button class="btn-check" onclick="check1_2()">Corregir selección</button></center>
+                <div id="feed-1-2" class="feedback-msg"></div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>1.3. La Caja Misteriosa <span id="lvl-1-3" class="level-badge">Reto 1</span></span><button class="btn-check" style="background:var(--accent)" onclick="nextLevel1_3()">Aumentar Dificultad ➔</button></div>
+                <div class="mystery-box-large">📦<div class="q-mark">?</div></div>
+                <p style="text-align:center; font-weight:bold;">¿Qué hay dentro de la caja? → x</p>
+                <div class="match-container"><div class="column" id="col-1-3-l"></div><div class="column" id="col-1-3-r"></div></div>
+                <div id="feed-1-3" class="feedback-msg"></div>
+            </div>
+        </div>
+
+        <div id="tab1" class="tab">
+            <div class="teoria-box">
+                <h3 style="margin-top:0;">🧬 Anatomía del Monomio</h3>
+                <p>El monomio es la expresión algebraica mas simple.</b></p>
+                <p><b>Un monomio es el producto de un número y una o varias letras.</b></p>
+                
+                <div class="anatomy-img">
+                    <span style="color:#3498db">-8</span><span style="color:#27ae60">xy</span><sup style="color:#27ae60">4</sup>
+                    <div class="parts-labels">
+                        <div class="label" style="background:#3498db">Coeficiente</div>
+                        <div class="label" style="background:#27ae60">Parte Literal</div>
+                    </div>
+                </div>
+
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>📌 <b>Coeficiente:</b> Es el número con su signo. Si no aparece ningún número delante de las letras, el coeficiente es 1. Si sólo aparece el signo menos, el coeficiente es -1.</li>
+                    <li>📌 <b>Parte Literal:</b> Son las letras y sus exponentes.</li>
+                    <li>📌 <b>Grado:</b> Es la suma de los exponentes de sus letras. 
+                 <p><b>¿Cómo se calcula?</b> Se suman los exponentes de todas las letras que forman la parte literal. Si una letra no tiene exponente escrito, se entiende que su exponente es 1.</li>
+                </ul>
+                
+                <p><i>Ejemplos de grado:</i><br>
+                • 5x³ → Grado 3<br>
+                • -2ab² → Grado 3 (porque 1 + 2 = 3)<br>
+                • 7x → Grado 1</p>
+
+                <p>⚠️ <b>Recordatorio:</b> Los exponentes de las letras deben ser números naturales (0, 1, 2...). Si hay una letra en el denominador o dentro de una raíz, no se considera monomio.</p>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>Actividad 2.1. ¿SÍ es monomio?</span><div><span id="c21" class="counter">1/3</span> <button class="btn-gen" onclick="load21()">Cambiar lista</button></div></div>
+                <div id="grid21" class="grid-select"></div>
+                <center><button class="btn-check" onclick="check21()">Verificar Selección</button></center>
+                <div id="f21" class="feedback-msg"></div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>Actividad 2.2. Completa la Tabla</span><div><span id="c22" class="counter">1/3</span> <button class="btn-gen" onclick="load22()">Nueva Tabla</button></div></div>
+                <table><thead><tr><th>Monomio</th><th>Coeficiente</th><th>Parte Literal</th><th>Grado</th></tr></thead><tbody id="tbody22"></tbody></table>
+                <center style="margin-top:15px;"><button class="btn-check" onclick="check22()">Comprobar Tabla</button></center>
+                <div id="f22" class="feedback-msg"></div>
+            </div>
+        </div>
+
+        <div id="tab2" class="tab">
+            <div class="teoria-box">
+                <h3 style="margin-top:0;">🔢 Valor Numérico</h3>
+                <p>Sustituimos las letras por números y resolvemos la operación del monomio. <b>Ejemplo:</b> Para 3x², si x = 2, el valor es 3 · (2)² = 12.</p>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>Actividad 3.1. Calcula en tu cuaderno</span><div><span id="c31" class="counter">1/3</span> <button class="btn-gen" onclick="load31()">Nuevos retos</button></div></div>
+                <div id="lista31" style="font-size:1.2em; line-height:2.5em;"></div>
+                <center style="margin-top:20px;"><button class="btn-check" onclick="check31()">Verificar Resultados</button></center>
+                <div id="f31" class="feedback-msg"></div>
+            </div>
+        </div>
+
+        <div id="tab3" class="tab">
+            <div class="teoria-box">
+                <h3 style="margin-top:0;">👯 Monomios Semejantes</h3>
+                <p>Tienen la <b>misma parte literal</b> (mismas letras y mismos exponentes).</p>
+                <div style="margin-top: 10px;">
+                    <span class="ex-tag ex-si">SÍ</span> 2x² y 5x² son semejantes. <br> 
+                    <span class="ex-tag ex-no">NO</span> 2x² y 2x no son semejantes.
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>Actividad 4.1. Busca su Pareja Semejante</span><div><span id="c41" class="counter">1/3</span> <button class="btn-gen" onclick="load41()">Nuevos monomios</button></div></div>
+                <div id="area41" style="max-width: 500px; margin: auto;"></div>
+                <center style="margin-top:20px;"><button class="btn-check" onclick="check41()">Corregir Parejas</button></center>
+                <div id="f41" class="feedback-msg"></div>
+            </div>
+        </div>
+
+        <div id="tab4" class="tab">
+            <div class="teoria-box">
+                <h3 style="margin-top:0;">➕ Suma y Resta</h3>
+                <p>Solo se pueden sumar o restar monomios si son <b>semejantes</b>.</p>
+                <p><b>Regla fundamental:</b> Para sumar o restar monomios semejantes, <b>se suman o restan los coeficientes y se deja la misma parte literal</b>.</p>
+                
+                
+                <div class="step-box">
+                    <strong>Ejemplo explicado paso a paso:</strong><br>
+                    Operación: 4x² - 2x² = (4 - 2)x² = 2x²<br><br>
+                    1. Identificar coeficientes: (4) y (-2)<br>
+                    2. Operar números: (4 - 2) = 2<br>
+                    3. Mantener parte literal: x²<br>
+                    <strong>Resultado final: 2x²</strong>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <span class="ex-tag ex-si">SÍ</span> 3x + 2x = 5x (sumamos coeficientes). <br> 
+                    <span class="ex-tag ex-no">NO</span> 3x + 2y no se puede sumar (se deja indicado).
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-title"><span>Actividad 5.1. Operaciones Básicas</span><div><span id="c51" class="counter">1/3</span> <button class="btn-gen" onclick="load51()">Nuevas operaciones</button></div></div>
+                <div id="area51"></div>
+                <center style="margin-top:20px;"><button class="btn-check" onclick="check51()">Verificar Cálculos</button></center>
+                <div id="f51" class="feedback-msg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let sL = null, sR = null;
+    let lvl1 = 0, lvl2 = 0, lvl3 = 0;
+    let counts = { c21: 0, c22: 0, c31: 0, c41: 0, c51: 0 };
+    let activeData = {};
+
+    function showTab(n) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab'+n).classList.add('active');
+        document.getElementById('btn'+n).classList.add('active');
+    }
+
+    function handleMatch(el, side, pairs, fid) {
+        if (el.classList.contains('matched')) return;
+        el.parentNode.querySelectorAll('.item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        if(side === 'L') sL = el; else sR = el;
+        if(sL && sR) {
+            const match = pairs.find(p => (p.l === sL.innerText && p.r === sR.innerText) || (p.r === sL.innerText && p.l === sR.innerText));
+            const f = document.getElementById(fid);
+            if(match) {
+                sL.classList.add('matched'); sR.classList.add('matched');
+                f.innerText = "¡Pareja Correcta! ✨"; f.style.color = "green";
+            } else {
+                f.innerText = "No coinciden ❌"; f.style.color = "red";
+                const a = sL, b = sR;
+                setTimeout(() => { a.classList.remove('selected'); b.classList.remove('selected'); }, 500);
+            }
+            sL = null; sR = null;
+        }
+    }
+
+    const data1_1 = [[{l:"🍎+🍎", r:"2a"}, {l:"🍐+🍐+🍐", r:"3b"}, {l:"🍎·🍎", r:"a²"}, {l:"🍐/2", r:"b/2"}], [{l:"💎+💎+💎+💎", r:"4g"}, {l:"💎·💎·💎", r:"g³"}, {l:"💍+💎", r:"j+g"}, {l:"2·💍", r:"2j"}], [{l:"🛠️+🛠️-🪚", r:"2h-s"}, {l:"(🛠️+🪚)·2", r:"2(h+s)"}, {l:"🪚/3", r:"s/3"}, {l:"🛠️·🪚", r:"h·s"}]];
+    function nextLevel1_1() { lvl1 = (lvl1 + 1) % 3; document.getElementById('lvl-1-1').innerText = "Nivel " + (lvl1 + 1); render('col-1-1-l', 'col-1-1-r', data1_1[lvl1], 'feed-1-1'); }
+
+    const data1_2 = [[{t:"3x + 2y", a:true}, {t:"15 / 3 + 2", a:false}, {t:"(a+b)/4", a:true}, {t:"√25 · 2", a:false}], [{t:"x² - 5x", a:true}, {t:"100 - (50+10)", a:false}, {t:"-8abc", a:true}, {t:"2 + 4 + 6 + 8", a:false}]];
+    let cur1_2 = [];
+    function nextLevel1_2() { lvl2 = (lvl2 + 1) % data1_2.length; document.getElementById('lvl-1-2').innerText = "Serie " + String.fromCharCode(65 + lvl2); cur1_2 = data1_2[lvl2]; const g = document.getElementById('grid-1-2'); g.innerHTML = ''; cur1_2.forEach((item, i) => { g.innerHTML += `<div class=\"option-box\"><input type=\"checkbox\" id=\"c12-${i}\"> ${item.t}</div>`; }); }
+    function check1_2() { const win = cur1_2.every((item, i) => document.getElementById('c12-'+i).checked === item.a); const f = document.getElementById('feed-1-2'); f.innerText = win ? "¡Excelente!" : "Revisa la selección."; f.style.color = win ? "green" : "red"; }
+
+    const data1_3 = [[{l:"El doble más cuatro", r:"2x + 4"}, {l:"El triple", r:"3x"}, {l:"Lo que hay en la caja al cuadrado", r:"x²"}, {l:"Lo que hay en la caja menos 5", r:"x - 5"}], [{l:"La mitad de sumar 3 a lo que hay en la caja", r:"(x+3)/2"}, {l:"La quinta parte de lo que hay en la caja", r:"x/5"}, {l:"El doble del siguiente valor que hay en la caja", r:"2(x+1)"}, {l:"La mitad del triple", r:"3x/2"}]];
+    function nextLevel1_3() { lvl3 = (lvl3 + 1) % data1_3.length; document.getElementById('lvl-1-3').innerText = "Reto " + (lvl3 + 1); render('col-1-3-l', 'col-1-3-r', data1_3[lvl3], 'feed-1-3'); }
+
+    function render(lid, rid, pairs, fid) { const l = document.getElementById(lid), r = document.getElementById(rid); l.innerHTML = ''; r.innerHTML = ''; const lefts = pairs.map(p => p.l).sort(() => 0.5 - Math.random()); const rights = pairs.map(p => p.r).sort(() => 0.5 - Math.random()); lefts.forEach(t => { const d = document.createElement('div'); d.className='item'; d.innerText=t; d.onclick=()=>handleMatch(d,'L', pairs, fid); l.appendChild(d); }); rights.forEach(t => { const d = document.createElement('div'); d.className='item'; d.innerText=t; d.onclick=()=>handleMatch(d,'R', pairs, fid); r.appendChild(d); }); }
+
+    const d21 = [[{t:"-5x²",a:true},{t:"3/x",a:false},{t:"8",a:true},{t:"x+1",a:false}], [{t:"abc",a:true},{t:"√x",a:false},{t:"-2y³",a:true},{t:"x-y",a:false}], [{t:"4x³y²",a:true},{t:"2^x",a:false},{t:"-m/5",a:true},{t:"x² + 3",a:false}]];
+    function load21() { activeData.p21=d21[counts.c21 % d21.length]; const g=document.getElementById('grid21'); g.innerHTML=activeData.p21.map((it,i)=>`<div class=\"option-box\"><input type=\"checkbox\" id=\"v21-${i}\">${it.t}</div>`).join(''); counts.c21++; document.getElementById('c21').innerText=(counts.c21%3||3)+"/3"; }
+    function check21() { let win=activeData.p21.every((it,i)=>document.getElementById('v21-'+i).checked===it.a); document.getElementById('f21').innerText=win?"¡Perfecto! ✨":"Revisa las reglas."; document.getElementById('f21').style.color=win?"green":"red"; }
+
+    const d22 = [[{m:"-3x⁴",c:"-3",l:"x⁴",g:"4"},{m:"ab²",c:"1",l:"ab²",g:"3"}], [{m:"-x",c:"-1",l:"x",g:"1"},{m:"5",c:"5",l:"",g:"0"}], [{m:"2xy³",c:"2",l:"xy³",g:"4"},{m:"-a²",c:"-1",l:"a²",g:"2"}]];
+    function load22() { activeData.p22=d22[counts.c22 % d22.length]; const b=document.getElementById('tbody22'); b.innerHTML=activeData.p22.map((it,i)=>`<tr><td><b>${it.m}</b></td><td><input id=\"c22-c-${i}\" type=\"text\"></td><td><input id=\"c22-l-${i}\" type=\"text\"></td><td><input id=\"c22-g-${i}\" type=\"text\"></td></tr>`).join(''); counts.c22++; document.getElementById('c22').innerText=(counts.c22%3||3)+"/3"; }
+    function check22() { 
+        let ok=true; 
+        const normPot = (v) => v.toString().replace(/\^/g, '').replace(/²/g, '2').replace(/³/g, '3').replace(/⁴/g, '4').trim().toLowerCase();
+        activeData.p22.forEach((it,i)=>{ 
+            let c = document.getElementById(`c22-c-${i}`).value.trim();
+            let l = normPot(document.getElementById(`c22-l-${i}`).value);
+            let g = document.getElementById(`c22-g-${i}`).value.trim();
+            if(c !== it.c || l !== normPot(it.l) || g !== it.g) ok=false; 
+        }); 
+        document.getElementById('f22').innerText=ok?"¡Correcto! ✨":"Hay errores."; document.getElementById('f22').style.color=ok?"green":"red"; 
+    }
+
+    const d31 = [[{p:"5x",v:"x=3",r:"15"},{p:"-2a",v:"a=4",r:"-8"}], [{p:"x²",v:"x=-5",r:"25"},{p:"3n³",v:"n=2",r:"24"}], [{p:"ab",v:"a=2, b=5",r:"10"},{p:"-x",v:"x=-9",r:"9"}]];
+    function load31() { activeData.p31=d31[counts.c31 % d31.length]; const l=document.getElementById('lista31'); l.innerHTML=activeData.p31.map((it,i)=>`<div>${i+1}) Monomio <b>${it.p}</b> para <b>${it.v}</b>: <input id=\"v31-${i}\" style=\"width:60px\"></div>`).join(''); counts.c31++; document.getElementById('c31').innerText=(counts.c31%3||3)+"/3"; }
+    function check31() { let ac=0; activeData.p31.forEach((it,i)=>{ if(document.getElementById('v31-'+i).value.trim()===it.r) ac++; }); document.getElementById('f31').innerText=`Aciertos: ${ac}/2`; document.getElementById('f31').style.color=ac===2?"green":"orange"; }
+
+    const d41 = [{ preguntas: ["3x", "-5ab²", "x²y", "8"], respuestas: ["-7x", "ab²", "4x²y", "-1"] }, { preguntas: ["m²n", "10x³", "-y", "ab"], respuestas: ["-3m²n", "x³", "5y", "2ab"] }, { preguntas: ["-4xz", "a²b²", "7", "x³y²"], respuestas: ["xz", "5a²b²", "0", "-x³y²"] }];
+    function load41() { activeData.p41 = d41[counts.c41 % 3]; const area = document.getElementById('area41'); area.innerHTML = ''; const opcionesMezcladas = [...activeData.p41.respuestas].sort(() => Math.random() - 0.5); activeData.p41.preguntas.forEach((preg, i) => { area.innerHTML += `<div class=\"match-row\"><div class=\"match-term\">${preg}</div><div>🔗</div><select id=\"sel41-${i}\"><option value=\"\">-- Selecciona --</option>${opcionesMezcladas.map(opt => `<option value=\"${opt}\">${opt}</option>`).join('')}</select></div>`; }); counts.c41++; document.getElementById('c41').innerText = (counts.c41%3||3) + "/3"; }
+    function check41() { let ac=0; activeData.p41.preguntas.forEach((p, i) => { if(document.getElementById(`sel41-${i}`).value === activeData.p41.respuestas[i]) ac++; }); const f=document.getElementById('f41'); f.innerText=ac===4?"¡Perfecto! 👯":"Revisa las parejas."; f.style.color=ac===4?"green":"orange"; }
+
+    const d51 = [{ ejercicios: [{op: "3x + 2x", r: "5x"}, {op: "8a - 5a", r: "3a"}, {op: "x² + x²", r: "2x²"}] }, { ejercicios: [{op: "4ab - ab", r: "3ab"}, {op: "-2x + 5x", r: "3x"}, {op: "7y² - 10y²", r: "-3y²"}] }, { ejercicios: [{op: "x/2 + x/2", r: "x"}, {op: "5xy - 8xy", r: "-3xy"}, {op: "3n³ + n³", r: "4n³"}] }];
+    function load51() { activeData.p51 = d51[counts.c51 % 3]; const area = document.getElementById('area51'); area.innerHTML = activeData.p51.ejercicios.map((ex, i) => `<div class=\"math-row\"><span>${ex.op} = </span><input type=\"text\" id=\"r51-${i}\" placeholder=\"?\" autocomplete=\"off\"></div>`).join(''); counts.c51++; document.getElementById('c51').innerText = (counts.c51%3||3) + "/3"; }
+    function check51() { 
+        let ac=0; 
+        const normS = (v) => v.toString().replace(/\s+/g, '').replace(/\^/g, '').replace(/²/g, '2').replace(/³/g, '3').replace(/⁴/g, '4').toLowerCase();
+        activeData.p51.ejercicios.forEach((ex, i) => { 
+            const userVal = normS(document.getElementById(`r51-${i}`).value);
+            const correctVal = normS(ex.r);
+            if((userVal === correctVal) || (ex.r === "x" && userVal === "1x")) { ac++; document.getElementById(`r51-${i}`).style.borderColor = "var(--success)"; } else { document.getElementById(`r51-${i}`).style.borderColor = "var(--danger)"; } 
+        }); 
+        const f = document.getElementById('f51'); f.innerText = ac === 3 ? "¡Correcto! ✨" : "Revisa los errores."; f.style.color = ac === 3 ? "green" : "red"; 
+    }
+
+    window.onload = () => { nextLevel1_1(); nextLevel1_2(); nextLevel1_3(); load21(); load22(); load31(); load41(); load51(); };
+</script>
+</body>
+</html>
